@@ -142,6 +142,7 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
           "情報タブの「過去の記録」を読んでみよう",
           "マミーに「りゅーせーさんのこと、昔から知ってますか」と聞いてみよう",
           "ChatKAGAにアクセスするとどうなる？Phase4で試してみよう",
+          "Phase4「行動を起こす」では、データを消す行動を宣言できる。証拠が少ないほど、マミーやウッウに阻まれる",
         ]
       },
     };
@@ -193,14 +194,19 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
         useEffect:"マミーに見せる：「…そうか、覚えてないんだな」。ウッウに見せる：表情が変わる" },
       { id:"unsent_memo", emoji:"💌", name:"りゅーせーへの未送信メモ",
         reqPhase:2, players:["yudi"],
-        desc:"スマホのメモアプリに下書き。「加賀さんが○○のことを知っている。このままじゃ——」。○○は自分で消した形跡。",
+        desc:"スマホのメモアプリに下書き。「加賀さんが不正アクセスのことを知っている。このままじゃ全部終わる——」。送信されなかった、あの夜のメモ。",
         how:"マミーに「りゅーせーさんのこと、昔から知ってますか」と聞く",
-        useEffect:"マミーに見せる：「…お前、思い出したのか」と驚く" },
+        useEffect:"マミーに見せる：「…お前、思い出したのか。あの夜、加賀に何をした」と詰める" },
       { id:"group_photo", emoji:"🎗", name:"古い集合写真",
         reqPhase:1, players:["yudi"],
         desc:"1年前の社員旅行の写真。4人で笑っている。りゅーせーだけが黒塗りにされている。",
         how:"ログタブの一番古い記録を読む",
         useEffect:"マミーに見せる：「…懐かしいな」。目が少し潤む" },
+      { id:"delete_attempt", emoji:"🗑", name:"削除コマンドの下書き",
+        reqPhase:4, players:["yudi"],
+        desc:"自分のスマホのメモ帳。ChatKAGAの管理APIエンドポイントと削除コマンド。22:00前から準備していた。",
+        how:"Phase4でChatKAGAタブを開いた後「行動を起こす」から使用可能",
+        useEffect:"マミーに見せる：「…お前、最初からそのつもりだったのか」。長い沈黙。" },
     ];
 
     const ENDINGS={
@@ -297,7 +303,7 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
           {who:"",wc:"#444466",ts:"",text:"（メッセージはここで途切れている）",gray:true},
         ]
       },
-      { id:"after_ryusei", title:"📅 2023/3/3 — マミー→ウッウ（DM）", note:"",
+      { id:"after_ryusei", title:"📅 2024/3/3 — マミー→ウッウ（DM）", note:"",
         lines:[
           {who:"間宮さん",wc:"#e63946",ts:"23:14",text:"なあ、今日何の日か知っとる？",mami:true},
           {who:"間宮さん",wc:"#e63946",ts:"23:31",text:"...まあいいけど",mami:true},
@@ -315,10 +321,13 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
 
     const LOG_DEEP={ id:"deep", title:"📅 2024/3/3 — セキュリティログ（深層）", note:"【要注意】",
       lines:[
+        {who:"SYSTEM",wc:"#9b5de5",ts:"19:29",text:"[最終ログイン] 加賀琉晟 ID:0089 — PC操作記録あり（ChatKAGA書き込み）"},
         {who:"SYSTEM",wc:"#e63946",ts:"19:32",text:"[退勤記録] 村松祐泰 ID:0192 — 退勤"},
-        {who:"SYSTEM",wc:"#555577",ts:"19:45",text:"[外部通報] 現場付近で事故通報（推定）"},
-        {who:"SYSTEM",wc:"#555577",ts:"19:48",text:"[送信エラー] マミー → 全体チャンネル（未送信）"},
-        {who:"",wc:"#444466",ts:"",text:"※退勤19:32、現場まで徒歩約8分",gray:true},
+        {who:"SYSTEM",wc:"#555577",ts:"19:38",text:"[入退室記録] 加賀琉晟 — B1駐車場エレベーター通過"},
+        {who:"SYSTEM",wc:"#e63946",ts:"19:46",text:"[外部通報] B1駐車場出口付近で人身事故通報 — 被害者：加賀琉晟（推定）"},
+        {who:"SYSTEM",wc:"#555577",ts:"19:48",text:"[送信エラー] 間宮和久 → 全体チャンネル（未送信）"},
+        {who:"",wc:"#444466",ts:"",text:"※村松退勤19:32 → B1駐車場まで徒歩約7分 → 事故発生19:46",gray:true},
+        {who:"",wc:"#444466",ts:"",text:"※加賀は19:29にChatKAGAへ最終書き込みを行っていた",gray:true},
       ]
     };
 
@@ -605,6 +614,13 @@ endingは：飲み会に行くと言ったらsurrender（defeat）、条件を�
           sys("🎗 黒塗りされた集合写真——4人目は誰だ");
           setTimeout(()=>{
             setMamiMsgs(p=>[...p,{from:"mami",avType:"mami",name:"マミー",nameColor:"#e63946",text:"…懐かしいな。（目が少し潤む）",bubbleType:"mami"}]);
+          },1200);
+        }
+        if(id==="delete_attempt"){
+          sys("🗑 削除コマンドの下書き——準備していた証拠をマミーに見せた");
+          setTimeout(()=>{
+            setMamiMsgs(p=>[...p,{from:"mami",avType:"mami",name:"マミー",nameColor:"#e63946",text:"…お前、最初からそのつもりだったのか。（長い沈黙）……加賀のことも、知ってたんか。",bubbleType:"mami"}]);
+            doAlert(clamp(alert+2),alert);
           },1200);
         }
       }
@@ -1274,6 +1290,12 @@ endingは：飲み会に行くと言ったらsurrender（defeat）、条件を�
                     , React.createElement('br', {__self: this})
                     , React.createElement('span', { style: {fontSize:11,color:"#555577"}}, "「🎬 行動を起こす」タブで動け。" )
                   )
+                  , !obtainedIds.includes("delete_attempt")&&React.createElement('button', {
+                    onClick: ()=>giveItem("delete_attempt"),
+                    style: {width:"100%",padding:12,background:"rgba(230,57,70,.15)",border:"1px solid rgba(230,57,70,.5)",borderRadius:10,color:"#e63946",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer"}
+                  }, "🗑 削除コマンドを準備する → アイテム入手"
+                  )
+                  , obtainedIds.includes("delete_attempt")&&React.createElement('div', { style: {fontSize:11,color:"#444466",textAlign:"center",marginTop:4}}, "✅ 削除コマンド準備済み" )
                 )
               ) : (
                 React.createElement('div', { style: {position:"absolute",inset:0,display:"flex",flexDirection:"column"}}
