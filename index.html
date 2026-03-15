@@ -770,7 +770,7 @@ endingは：飲み会に行くと言ったらsurrender（defeat）、条件を�
                 , isPhase3result?"🎭 Phase3 — マミーとの結末":"🌙 Phase4 — 最終シナリオ"
               )
             )
-            , React.createElement('div', { style: {flex:1,overflowY:"auto",padding:"24px 20px",lineHeight:2.1}}
+            , React.createElement('div', { style: {flex:1,overflowY:"auto",padding:"24px 20px 80px",lineHeight:2.1}}
               , narration.text.split("\n").filter(l=>l.trim()).map((line,i)=>(
                 React.createElement('p', { key: i, style: {fontSize:14,color:"#ccccdd",marginBottom:14,animation:`fu ${0.2+i*0.07}s ease both`}}, line)
               ))
